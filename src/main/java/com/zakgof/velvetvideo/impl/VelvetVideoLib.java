@@ -21,8 +21,8 @@ import java.util.stream.StreamSupport;
 
 import javax.sound.sampled.AudioFormat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 
 import com.zakgof.velvetvideo.Direction;
 import com.zakgof.velvetvideo.IAudioDecoderStream;
@@ -179,7 +179,7 @@ public class VelvetVideoLib implements IVelvetVideoLib {
     }
 
     private abstract class AbstractMuxerStreamImpl implements AutoCloseable {
-    	protected final Logger logEncoder = LoggerFactory.getLogger("velvet-video.encoder");
+    	// protected final Logger logEncoder = LoggerFactory.getLogger("velvet-video.encoder");
 		final Consumer<AVPacket> output;
 		final AVPacket packet;
 	    AVStream stream;
@@ -199,14 +199,14 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 		public void init() {
 			this.defaultFrameDuration = codecTimeBaseNum * stream.time_base.den.get() / codecTimeBaseDen / stream.time_base.num.get();
 			this.streamIndex = stream.index.get();
-			logEncoder.atInfo()
-				.addArgument(stream.index.get())
-	        	.addArgument(stream.time_base.num.get())
-	        	.addArgument(stream.time_base.den.get())
-	        	.addArgument(stream.codec.get().codec.get().name.get())
-	        	.addArgument(codecTimeBaseNum)
-	        	.addArgument(codecTimeBaseDen)
-	        	.log("stream {}: timebase: {}/{}, codec [{}] timebase {}/{}");
+			// logEncoder.atInfo()
+			// 	.addArgument(stream.index.get())
+	        // 	.addArgument(stream.time_base.num.get())
+	        // 	.addArgument(stream.time_base.den.get())
+	        // 	.addArgument(stream.codec.get().codec.get().name.get())
+	        // 	.addArgument(codecTimeBaseNum)
+	        // 	.addArgument(codecTimeBaseDen)
+	        // 	.log("stream {}: timebase: {}/{}, codec [{}] timebase {}/{}");
 
 		}
 
@@ -256,14 +256,14 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 				this.defaultFrameDuration = codecTimeBaseNum * stream.time_base.den.get() / codecTimeBaseDen / stream.time_base.num.get();
 			}
 			this.streamIndex = stream.index.get();
-			logEncoder.atInfo()
-				.addArgument(stream.index.get())
-	        	.addArgument(stream.time_base.num.get())
-	        	.addArgument(stream.time_base.den.get())
-	        	.addArgument(stream.codec.get().codec.get().name.get())
-	        	.addArgument(codecTimeBaseNum)
-	        	.addArgument(codecTimeBaseDen)
-	        	.log("stream {} (remux): timebase: {}/{}, codec [{}] timebase {}/{}");
+			// logEncoder.atInfo()
+			// 	.addArgument(stream.index.get())
+	        // 	.addArgument(stream.time_base.num.get())
+	        // 	.addArgument(stream.time_base.den.get())
+	        // 	.addArgument(stream.codec.get().codec.get().name.get())
+	        // 	.addArgument(codecTimeBaseNum)
+	        // 	.addArgument(codecTimeBaseDen)
+	        // 	.log("stream {} (remux): timebase: {}/{}, codec [{}] timebase {}/{}");
 		}
 
     	@Override
@@ -360,9 +360,9 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 		}
 
         private void encodeFrame(AVFrame frame) {
-        	logEncoder.atDebug()
-        		.addArgument(streamIndex)
-        		.log(() -> frame == null ? "stream {}: flush" :  "stream {}: send frame for encoding, PTS=" + frame.pts.get());
+        	// logEncoder.atDebug()
+        	// 	.addArgument(streamIndex)
+        	// 	.log(() -> frame == null ? "stream {}: flush" :  "stream {}: send frame for encoding, PTS=" + frame.pts.get());
         	checkcode(libavcodec.avcodec_send_frame(codecCtx, frame));
             // libavutil.av_frame_unref(frame);
             for (;;) {
@@ -383,19 +383,19 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 //                else
 //                	packet.duration.set(codecToStream(packet.duration.get()));
 
-                logEncoder.atDebug()
-                	.addArgument(() -> packet.pts.get())
-                	.addArgument(() -> packet.dts.get())
-                	.addArgument(() -> packet.duration.get())
-                	.addArgument(() -> packet.size.get())
-                	.log(() -> "encoder: returned packet  PTS/DTS: {}/{}, duration={}, {} bytes");
+                // logEncoder.atDebug()
+                // 	.addArgument(() -> packet.pts.get())
+                // 	.addArgument(() -> packet.dts.get())
+                // 	.addArgument(() -> packet.duration.get())
+                // 	.addArgument(() -> packet.size.get())
+                // 	.log(() -> "encoder: returned packet  PTS/DTS: {}/{}, duration={}, {} bytes");
 
                 fixEncodedPacketPtsDtsDuration();
         		if (packet.pts.get() != nextExpectedPts) {
-        			logEncoder.atWarn()
-        				.addArgument(nextExpectedPts)
-        				.addArgument(packet.pts.get())
-        				.log("expected PTS mismatch: expected {}, actual {}");
+        			// logEncoder.atWarn()
+        			// 	.addArgument(nextExpectedPts)
+        			// 	.addArgument(packet.pts.get())
+        			// 	.log("expected PTS mismatch: expected {}, actual {}");
         		}
         		nextExpectedPts = packet.pts.get() + packet.duration.get();
                 output.accept(packet);
@@ -487,9 +487,9 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 				if (dur == null)
 					dur = 1;
 				packet.duration.set(dur * defaultFrameDuration);
-				logEncoder.atDebug()
-					.addArgument(() -> packet.duration.get())
-					.log(() -> "encoder: duration adjusted to {}");
+				// logEncoder.atDebug()
+				// 	.addArgument(() -> packet.duration.get())
+				// 	.log(() -> "encoder: duration adjusted to {}");
 			}
 		}
 
@@ -664,7 +664,7 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 
     private class MuxerImpl implements IMuxer {
 
-    	private final Logger logMuxer = LoggerFactory.getLogger("velvet-video.muxer");
+    	// private final Logger logMuxer = LoggerFactory.getLogger("velvet-video.muxer");
 
         private final LibAVFormat libavformat;
         private final List<VideoEncoderStreamImpl> videoStreams = new ArrayList<>();
@@ -684,12 +684,12 @@ public class VelvetVideoLib implements IVelvetVideoLib {
             initCustomAvio(false, formatCtx, callback);
 
             Consumer<AVPacket> packetStream = packet -> {
-            	logMuxer.atDebug()
-            		.addArgument(() -> packet.pts.get())
-            		.addArgument(() -> packet.dts.get())
-            		.addArgument(() -> packet.duration.get())
-            		.addArgument(() -> packet.size.get())
-            		.log("writing packet PTS/DTS = {}/{}, duration={}, {} bytes");
+            	// logMuxer.atDebug()
+            	// 	.addArgument(() -> packet.pts.get())
+            	// 	.addArgument(() -> packet.dts.get())
+            	// 	.addArgument(() -> packet.duration.get())
+            	// 	.addArgument(() -> packet.size.get())
+            	// 	.log("writing packet PTS/DTS = {}/{}, duration={}, {} bytes");
             	checkcode(libavformat.av_write_frame(formatCtx, packet));
             };
 
@@ -774,10 +774,10 @@ public class VelvetVideoLib implements IVelvetVideoLib {
             }
             // flush muxer
             do {
-            	logMuxer.atDebug().log("flushing");
+            	// logMuxer.atDebug().log("flushing");
             } while (checkcode(libavformat.av_write_frame(formatCtx, null)) == 0);
 
-            logMuxer.atDebug().log("writing trailer");
+            // logMuxer.atDebug().log("writing trailer");
             checkcode(libavformat.av_write_trailer(formatCtx));
             // dispose resources
             AVIOContext avio = formatCtx.pb.get();
@@ -798,7 +798,7 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 
     public class DemuxerImpl implements IDemuxer {
 
-    	private final Logger logDemuxer = LoggerFactory.getLogger("velvet-video.demuxer");
+    	// private final Logger logDemuxer = LoggerFactory.getLogger("velvet-video.demuxer");
         private final AVFormatContext formatCtx;
         private final ISeekableInput input;
         private final IOCallback callback;
@@ -897,18 +897,18 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 			packet.size.set(0);
 			int res = libavformat.av_read_frame(formatCtx, packet);
 			if (res == LibAVUtil.AVERROR_EOF || res == -1) {
-				logDemuxer.atDebug()
-					.log(() -> "muxer empty");
+				// logDemuxer.atDebug()
+				// 	.log(() -> "muxer empty");
 				return null;
 			}
 			checkcode(res);
-			logDemuxer.atDebug()
-				.addArgument(packet.stream_index.get())
-				.addArgument(packet.pts.get())
-				.addArgument(packet.dts.get())
-				.addArgument(packet.duration.get())
-				.addArgument(packet.size.get())
-				.log(() -> "stream {}: read packet PTS/DTS={}/{} duration={} size={} bytes");
+			// logDemuxer.atDebug()
+			// 	.addArgument(packet.stream_index.get())
+			// 	.addArgument(packet.pts.get())
+			// 	.addArgument(packet.dts.get())
+			// 	.addArgument(packet.duration.get())
+			// 	.addArgument(packet.size.get())
+			// 	.log(() -> "stream {}: read packet PTS/DTS={}/{} duration={} size={} bytes");
 			return packet;
         }
 
@@ -943,13 +943,13 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 			DecoderAudioStreamImpl audioStream = indexToAudioStream.get(index);
 			if (audioStream != null)
 				return audioStream.decodePacket(p);
-			logDemuxer.atWarn().addArgument(index).log("received packet of unknown stream {}");
+			// logDemuxer.atWarn().addArgument(index).log("received packet of unknown stream {}");
 			return new UnknownPacket();
 		}
 
 		private IDecodedPacket<?> flushNextStream() {
 			for (; flushStreamIndex < allStreams.size(); flushStreamIndex++) {
-				logDemuxer.atDebug().addArgument(flushStreamIndex).log(() -> "flushing demuxer stream={}");
+				// logDemuxer.atDebug().addArgument(flushStreamIndex).log(() -> "flushing demuxer stream={}");
 				AbstractDecoderStream stream = allStreams.get(flushStreamIndex);
 				IDecodedPacket<?> packet = stream.decodePacket(null);
 				if (packet != null) {
@@ -1023,9 +1023,9 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 				super(avstream, name);
 		    	AudioFormat suggestedFormat = codecCtx.sample_fmt.get().destFormat().toAudioFormat(codecCtx.sample_rate.get(), codecCtx.channels.get());
 		    	targetFormat = new BestMatchingAudioFormatConvertor().apply(suggestedFormat);
-		    	logDecoder.atInfo().addArgument(index()).addArgument(targetFormat).log("stream {}: audio format [{}]");
+		    	// logDecoder.atInfo().addArgument(index()).addArgument(targetFormat).log("stream {}: audio format [{}]");
 		    	if (!targetFormat.equals(suggestedFormat)) {
-		    		logDecoder.atWarn().addArgument(suggestedFormat).addArgument(targetFormat).log("Audio format converted [{}] -> [{}]");
+		    		// logDecoder.atWarn().addArgument(suggestedFormat).addArgument(targetFormat).log("Audio format converted [{}] -> [{}]");
 		    	}
 			}
 
@@ -1077,7 +1077,7 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 
         public abstract class AbstractDecoderStream implements AutoCloseable {
 
-        	protected final Logger logDecoder = LoggerFactory.getLogger("velvet-video.decoder");
+        	// protected final Logger logDecoder = LoggerFactory.getLogger("velvet-video.decoder");
 
             protected final AVStream avstream;
             protected final AVCodecContext codecCtx;
@@ -1096,14 +1096,14 @@ public class VelvetVideoLib implements IVelvetVideoLib {
                 this.codecCtx = avstream.codec.get();
                 AVCodec codec = libavcodec.avcodec_find_decoder(codecCtx.codec_id.get());
                 checkcode(libavcodec.avcodec_open2(codecCtx, codec, null));
-                logDecoder.atInfo()
-                	.addArgument(avstream.index.get())
-                	.addArgument(avstream.time_base.num.get())
-                	.addArgument(avstream.time_base.den.get())
-                	.addArgument(codec.name.get())
-                	.addArgument(codecCtx.time_base.num.get())
-                	.addArgument(codecCtx.time_base.den.get())
-                	.log("stream {}: timebase: {}/{}, codec [{}] timebase {}/{}");
+                // logDecoder.atInfo()
+                // 	.addArgument(avstream.index.get())
+                // 	.addArgument(avstream.time_base.num.get())
+                // 	.addArgument(avstream.time_base.den.get())
+                // 	.addArgument(codec.name.get())
+                // 	.addArgument(codecCtx.time_base.num.get())
+                // 	.addArgument(codecCtx.time_base.den.get())
+                // 	.log("stream {}: timebase: {}/{}, codec [{}] timebase {}/{}");
             }
 
             /**
@@ -1118,20 +1118,20 @@ public class VelvetVideoLib implements IVelvetVideoLib {
 	            	if (frame == null)
 	            		return null;
 	            	long pts = frame.pts.get();
-	                logDecoder.atDebug().addArgument(pts).log("delivered frame pts={}");
+	                // logDecoder.atDebug().addArgument(pts).log("delivered frame pts={}");
 	                if (skipToPts != -1) {
 	                	if (pts == AVNOPTS_VALUE) {
 	                		throw new VelvetVideoException("Cannot seek when decoded packets have no PTS. Looks like neither codec no container keep timing information.");
 	                	}
 	                    if (pts < skipToPts) {
-							logDecoder.atDebug().addArgument(() -> skipToPts)
-									.log(" ...but need to skip more to pts={}");
+							// logDecoder.atDebug().addArgument(() -> skipToPts)
+							// 		.log(" ...but need to skip more to pts={}");
 							if (pack == null)
 								continue;
 							return null;
 						} else if (pts > skipToPts) {
-							logDecoder.atWarn().addArgument(pts).addArgument(skipToPts)
-									.log(" ...unexpected position: PTS={} missed target PTS={}");
+							// logDecoder.atWarn().addArgument(pts).addArgument(skipToPts)
+							// 		.log(" ...unexpected position: PTS={} missed target PTS={}");
 							if (pack == null)
 								continue;
 							return null;
@@ -1157,10 +1157,10 @@ public class VelvetVideoLib implements IVelvetVideoLib {
             	 if (res == LibAVUtil.AVERROR_EOF || pack != null && res == LibAVUtil.AVERROR_EAGAIN)
             		 return null;
             	 checkcode(res);
-            	 logDecoder.atDebug()
-            	 	.addArgument(frameHolder.pts())
-            	 	.addArgument(() -> libavutil.av_frame_get_pkt_duration(frameHolder.frame()))
-            	 	.log("decoded frame pts={} dur={}");
+            	//  logDecoder.atDebug()
+            	//  	.addArgument(frameHolder.pts())
+            	//  	.addArgument(() -> libavutil.av_frame_get_pkt_duration(frameHolder.frame()))
+            	//  	.log("decoded frame pts={} dur={}");
             	 libavcodec.av_packet_unref(packet);
             	 return frameHolder.frame();
             }
@@ -1186,14 +1186,14 @@ public class VelvetVideoLib implements IVelvetVideoLib {
                 long cd = codecCtx.time_base.den.get();
                 long defaultFrameDur = cn * avstream.time_base.den.get() * codecCtx.ticks_per_frame.get() / (cd * avstream.time_base.num.get());
                 long pts = frameIndex * defaultFrameDur;
-                logDecoder.atDebug().addArgument(() -> frameIndex).addArgument(() -> pts).log("seeking to frame {}, target pts={}");
+                // logDecoder.atDebug().addArgument(() -> frameIndex).addArgument(() -> pts).log("seeking to frame {}, target pts={}");
                 seekToPts(pts);
             }
 
 
             public void seekToNano(long nanostamp) {
                 long pts = nanostamp * avstream.time_base.den.get() / avstream.time_base.num.get() / 1000000;
-                logDecoder.atDebug().addArgument(() -> nanostamp).addArgument(() -> pts).log("seeking to t={} ns, target pts={}");
+                // logDecoder.atDebug().addArgument(() -> nanostamp).addArgument(() -> pts).log("seeking to t={} ns, target pts={}");
                 seekToPts(pts);
             }
 

@@ -1,7 +1,7 @@
 package com.zakgof.velvetvideo.impl.middle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 
 import com.zakgof.velvetvideo.impl.JNRHelper;
 import com.zakgof.velvetvideo.impl.jnr.AVCodecContext;
@@ -23,7 +23,7 @@ public class Filters implements AutoCloseable {
 	private final static LibAVFilter libavfilter = JNRHelper.load(LibAVFilter.class, "avfilter", 7);
 	private static final LibAVUtil libavutil = JNRHelper.load(LibAVUtil.class, "avutil", 56);
 
-	private final Logger logFilter = LoggerFactory.getLogger("velvet-video.filter");
+	// private final Logger logFilter = LoggerFactory.getLogger("velvet-video.filter");
 
 	private final AVFilterContext buffersrc_ctx;
 	private final AVFilterContext buffersink_ctx;
@@ -92,23 +92,23 @@ public class Filters implements AutoCloseable {
 			libavutil.checkcode(libavutil.av_frame_get_buffer(workframe, 0));
 		}
 
-		logFilter.atDebug()
-				.log(inputframe == null ? "filter flush" : "frame send to filter PTS=" + inputframe.pts.get());
+		// logFilter.atDebug()
+		// 		.log(inputframe == null ? "filter flush" : "frame send to filter PTS=" + inputframe.pts.get());
 		libavutil.checkcode(libavfilter.av_buffersrc_write_frame(buffersrc_ctx, inputframe));
 		int res = libavfilter.av_buffersink_get_frame(buffersink_ctx, workframe);
 		if (res == LibAVUtil.AVERROR_EAGAIN || res == LibAVUtil.AVERROR_EOF) {
 			if (inputframe == null)
-				logFilter.atDebug().log("filter buffers empty");
+				// logFilter.atDebug().log("filter buffers empty");
 			return null;
 		}
 		libavutil.checkcode(res);
-		logFilter.atDebug().addArgument(workframe.pts.get()).log("filter returned frame PTS={}");
+		// logFilter.atDebug().addArgument(workframe.pts.get()).log("filter returned frame PTS={}");
 
 		return workframe;
 	}
 
 	public void reset() {
-		logFilter.atDebug().log("draining filters");
+		// logFilter.atDebug().log("draining filters");
 		while (libavfilter.av_buffersink_get_frame(buffersink_ctx, workframe) >= 0);
 	}
 
